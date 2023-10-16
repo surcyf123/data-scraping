@@ -1,6 +1,7 @@
 
 # %%
-
+ids_seen = []
+# %%
 """_summary_
 Todo:
 1. Multiprocessing? How to handle continue token if it cant be done in parallel
@@ -22,11 +23,11 @@ def get_posts(hashtag:str, amount: int = 20,continuation_token=None) -> Tuple[Li
 
     if continuation_token:
         url = "https://twitter154.p.rapidapi.com/hashtag/hashtag/continuation"
-        querystring = {"hashtag":f"#{hashtag}","continuation_token":continuation_token,"limit":amount,"section":"top"}
+        querystring = {"hashtag":f"#{hashtag}","continuation_token":continuation_token,"limit":amount,"section":"latest"}
 
     else:
         url = "https://twitter154.p.rapidapi.com/hashtag/hashtag"
-        querystring = {"hashtag":f"#{hashtag}","limit":amount,"section":"top"}
+        querystring = {"hashtag":f"#{hashtag}","limit":amount,"section":"latest"}
 
     response = requests.get(url, headers=headers, params=querystring)
     t2 = time.time() - t1
@@ -69,6 +70,22 @@ def get_number_of_posts(hashtag: str, amount: int) -> List[Dict]:
 
     return all_posts
 
+
+
+
+def get_single_response_no_dup(hashtag: str) -> str:
+    found = False
+    continuation_token = None
+    while not found:
+        resp = get_posts(hashtag=hashtag, amount=20,continuation_token=continuation_token)
+        resp_list = resp['results']
+        for post in resp_list:
+            if post['tweet_id'] in ids_seen:
+                continue
+            else:
+                ids_seen.append(post['tweet_id'])
+                return post['text']
+        continuation_token = resp['continuation_token']
 
 
  
