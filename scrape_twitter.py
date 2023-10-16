@@ -11,6 +11,8 @@ Todo:
 from typing import Dict, List, Tuple
 import requests
 import time
+from datetime import datetime
+
 # permitted: 'top', 'latest', 'people', 'photos', 'videos'"
 def get_posts(hashtag:str, amount: int = 20,continuation_token=None) -> Tuple[List[Dict],str]:
     assert(amount<=20)
@@ -73,7 +75,7 @@ def get_number_of_posts(hashtag: str, amount: int) -> List[Dict]:
 
 
 
-def get_single_response_no_dup(hashtag: str) -> str:
+def get_single_response_no_dup(hashtag: str) -> Dict[str,str]:
     found = False
     continuation_token = None
     while not found:
@@ -84,7 +86,11 @@ def get_single_response_no_dup(hashtag: str) -> str:
                 continue
             else:
                 ids_seen.append(post['tweet_id'])
-                return post['text'], post['timestamp']
+                dt_object = datetime.utcfromtimestamp(post['timestamp'])
+                formatted_str = dt_object.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+
+
+                return {'text': post['text'], 'id': post['tweet_id'], 'created_at': formatted_str}
         continuation_token = resp['continuation_token']
 
 
