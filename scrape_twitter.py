@@ -84,7 +84,7 @@ def get_single_response_no_dup(hashtag: str) -> str:
                 continue
             else:
                 ids_seen.append(post['tweet_id'])
-                return post['text']
+                return post['text'], post['timestamp']
         continuation_token = resp['continuation_token']
 
 
