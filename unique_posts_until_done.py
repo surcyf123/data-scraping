@@ -94,7 +94,7 @@ def get_single_response_no_dup(hashtag: str) -> Dict[str,str]:
         continuation_token = resp['continuation_token']
 
 
-def get_multiple_tweets_no_dup(hashtag: str, amount:int) -> Dict[str,str]:
+def get_multiple_tweets_no_dup(hashtag: str, amount:int) -> List[Dict[str,str]]:
     amount_left = amount
     continuation_token = None
     tweet_responses = []
